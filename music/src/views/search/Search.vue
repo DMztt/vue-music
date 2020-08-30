@@ -1,6 +1,7 @@
 <template>
   <div id="home">
     我是search
+    <div class="dv"></div>
   </div>
 </template>
 
@@ -18,8 +19,9 @@ export default {
 </script>
 
 <style scoped>
-#home {
-  height: 100vh
+.dv {
+  position: fixed;
+  bottom: 100px;
 }
 
 </style>

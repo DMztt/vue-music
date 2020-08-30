@@ -1,7 +1,20 @@
 <template>
   <div class="singer">
-    <scroll class="wrapper">
-      <list-view :list="singerList" />
+    <div class="list-side-nav" >
+        <div
+            class="list-side-item"
+            @touchstart.stop.prevent="($event) => {sideNavClick($event, index)}"
+            v-for="(item, index) in listTitle"
+            :key="index"
+            :data-index="index"
+            @touchmove.prevent="($event) => {onTouchMove($event,index)}"
+            :class="{active: currentIndex === index}"
+            >
+            {{item}}
+            </div>
+    </div>
+    <scroll class="wrapper" ref="scroll" :probe-type="probeType">
+      <list-view :list="singerList" ref="list_view"/>
     </scroll>
   </div>
 </template>
@@ -24,20 +37,32 @@ export default {
   },
   data() {
     return {
-      singerList: []
+      singerList: [],
+      probeType: 3,
+      currentIndex: 0,
+      obj: {
+        name: 'haha',
+        age: 18
+      }
     }
   },
   mounted() {
     this.getSingerList()
+  },
+  computed: {
+    listTitle() {
+      return this.singerList.map(item => {
+        return item.title.substr(0,1)
+      })
+    }
   },
   methods: {
     getSingerList() {
       getSingerList().then(res => {
         if(res.code === ERR_OK) {
           this.singerList = this._normalSingerList(res.data.list)
-          console.log(this.singerList)
+          // console.log(this.singerList)
         }
-
       })
     },
     _normalSingerList(list) {
@@ -85,16 +110,44 @@ export default {
         return a.title.charCodeAt(0) - b.title.charCodeAt(0)
       })
       return hot.concat(ret)
+  },
+  sideNavClick(e,index) {
+    console.log(e,index)
+    let listChild = this.$refs.list_view.$el.children[index]
+    this.$refs.scroll.scrollToElement(listChild,500)
+    this.currentIndex = index
+  },
+  onTouchMove(e,index) {
+    console.log(e,index)
+    // this.currentIndex = index
   }
   }
 }
 </script>
 <style scoped>
 .singer {
-  height: 100vh
+  height: 100vh;
 }
 .wrapper {
   height: calc(100% - 88px);
   overflow: hidden;
+}
+.list-side-nav {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  color: rgba(255,255,255,0.5);
+  font-size: 12px;
+  z-index: 9999;
+  border-radius: 10px;
+  padding: 20px 0;
+  background: rgba(0,0,0,0.3);
+  transform: translate(0, -38%);
+}
+.list-side-item {
+  padding: 3px;
+}
+.active {
+  color: #ffcd32
 }
 </style>

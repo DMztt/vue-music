@@ -1,12 +1,13 @@
 <template>
   <div class="list-view">
-    <div v-for="(group,index) in list" :key="index">
+    <div v-for="(group,index) in list" :key="index" >
       <h4 class="list-view-title">{{group.title}}</h4>
-      <div v-for="(item,i) in group.items" :key="i" class="group-item">
+      <div v-for="(item,i) in group.items" :key="i" class="group-item" ref="group">
         <img class="group.image" :src="item.avator" alt="">
         <span>{{item.name}}</span>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -25,9 +26,6 @@ export default {
 </script>
 
 <style scoped>
-li {
-  list-style: none;
-}
 .list-view-title {
   height: 30px;
   line-height: 30px;
@@ -53,4 +51,5 @@ li {
   margin-left: 20px;
   color: rgba(255,255,255,0.5);
 }
+
 </style>

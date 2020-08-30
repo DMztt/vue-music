@@ -34,11 +34,17 @@ export default {
       click: true,
       probeType: this.probeType,
       pullUpLoad: this.pullUpLoad
+    }),
+    this.scroll.on('scroll',( position) => {
+      // console.log(position)
     })
   },
   methods: {
     refresh() {
       this.scroll && this.scroll.refresh()
+    },
+    scrollToElement() {
+      this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
     }
   }
 }
