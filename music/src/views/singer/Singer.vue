@@ -13,8 +13,8 @@
             {{item}}
             </div>
     </div>
-    <scroll class="wrapper" ref="scroll" :probe-type="probeType">
-      <list-view :list="singerList" ref="list_view"/>
+    <scroll class="wrapper" ref="scroll" :probe-type="probeType" @scrollPage="listViewScroll">
+      <list-view :list="singerList" ref="list_view" @singerImgLoad="singerImgLoad" />
     </scroll>
   </div>
 </template>
@@ -43,7 +43,10 @@ export default {
       obj: {
         name: 'haha',
         age: 18
-      }
+      },
+      touch: {},
+      listGroupHeight: [],
+      num: 0
     }
   },
   mounted() {
@@ -54,7 +57,12 @@ export default {
       return this.singerList.map(item => {
         return item.title.substr(0,1)
       })
-    }
+    },
+    // imageLength() {
+    //   return this.singerList.map(val => {
+    //     return this.num += val.items.length
+    //   })
+    // }
   },
   methods: {
     getSingerList() {
@@ -112,14 +120,53 @@ export default {
       return hot.concat(ret)
   },
   sideNavClick(e,index) {
-    console.log(e,index)
+
+    console.log(e.touches[0].pageY+ '---y1')
+    this.touch.y1 = e.touches[0].pageY
     let listChild = this.$refs.list_view.$el.children[index]
     this.$refs.scroll.scrollToElement(listChild,500)
     this.currentIndex = index
   },
   onTouchMove(e,index) {
-    console.log(e,index)
-    // this.currentIndex = index
+    this.touch.y2 = e.touches[0].pageY
+    let num = Math.floor((this.touch.y2 - this.touch.y1) / 18)
+    this.currentIndex = num + index
+    let listChild = this.$refs.list_view.$el.children[this.currentIndex]
+    this.$refs.scroll.scrollToElement(listChild,500)
+  },
+  __calculateHeight() {
+    let height = 0;
+    console.log(this.$refs.listView.$el)
+  },
+  listViewScroll(position) {
+
+    let y = Math.abs(position.y)
+
+    // console.log(this.listGroupHeight)
+
+    let arr = [0, 720, ]
+    for (let i = 0; i < this.listGroupHeight.length; i++) {
+      const height1 = this.listGroupHeight[i]
+      const height2 = this.listGroupHeight[i + 1]
+      if((this.currentIndex !== i)&&(y > height1&& y < height2)) {
+        this.currentIndex = i
+        // console.log(i,'----')
+      }
+    }
+
+  },
+  singerImgLoad() {
+    this.listGroupHeight = []
+    let length = this.$refs.list_view.$el.children.length
+    let height = 0;
+    for (let i = 0; i < length; i++) {
+      let item = this.$refs.list_view.$el.children[i].clientHeight
+      height += item
+      this.listGroupHeight.push(height)
+      // console.log(item)
+    }
+    this.listGroupHeight.unshift(0)
+    this.listGroupHeight.push(Number.MAX_VALUE)
   }
   }
 }

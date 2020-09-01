@@ -3,7 +3,7 @@
     <div v-for="(group,index) in list" :key="index" >
       <h4 class="list-view-title">{{group.title}}</h4>
       <div v-for="(item,i) in group.items" :key="i" class="group-item" ref="group">
-        <img class="group.image" :src="item.avator" alt="">
+        <img class="group.image" :src="item.avator" alt="" @load="imageLoad">
         <span>{{item.name}}</span>
       </div>
     </div>
@@ -21,6 +21,39 @@ export default {
         return []
       }
     }
+  },
+  data() {
+    return {
+      count: 0,
+      num: 109
+    }
+  },
+  mounted() {
+    // this.imageLength()
+  },
+  // watch: {
+  //   list: {
+  //     deep: true,
+  //     handler: function (newVal) {
+  //       this.num = this.list.map(val => {
+  //       return this.num += val.items.length
+  //     })
+  //     }
+  //   }
+  // },
+  methods: {
+    imageLoad() {
+      console.log('loading'+ this.num)
+      if(this.num === ++this.count) {
+        this.$emit('singerImgLoad')
+        console.log('----------------')
+      }
+    },
+    // imageLength() {
+    //   return this.list.map(val => {
+    //     return this.num += val.items.length
+    //   })
+    // }
   }
 }
 </script>
